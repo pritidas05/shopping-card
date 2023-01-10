@@ -1,0 +1,433 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<windows.h>
+#include<string.h>
+
+void menu();
+void add_c();
+void add_i();
+void view_card();
+void view_items();
+int check_cus(char c_name[]);
+void modify();
+void deleterec();
+void points();
+struct card
+{
+    int card_id;//item_id;
+    char c_name[30];
+    /*char i_name[20];
+    int points,quantity;
+    float price;*/
+    char dob[11],/*ldot[11],*/addr[100];
+};
+struct customer
+{
+    int item_id, points, quantity;
+    char c_name[30],i_name[20],ldot[11];
+    float price;
+};
+int main()
+{
+
+    printf("\n<--:DETAILS OF SHOPPING CARD:-->\n\n");
+
+    printf("\nPress any key to continue.\n");
+    getch();
+    menu();
+    return 0;
+}
+void menu()
+{
+    int choice;
+    system("cls");
+    printf("<----------------:MENU:----------------->\n\n");
+    printf("Enter appropriate number to perform following task.");
+    printf("\n\t1 : Add Customer.");
+    printf("\n\t2 : Add Items to existing Customer.");
+    printf("\n\t3 : View Card Details.");
+    printf("\n\t4 : View Item Details.");
+    printf("\n\t5 : Modify Card.");
+    printf("\n\t6 : Delete.");
+    printf("\n\t7 : Check points.");
+    printf("\n\t8 : Exit.");
+    printf("\nEnter your choice.");
+    scanf("%d",&choice);
+    switch(choice)
+    {
+    case 1:
+        add_c();
+        break;
+
+    case 2:
+        add_i();
+        break;
+
+    case 3:
+        view_card();
+        break;
+
+    case 4:
+        view_items();
+        break;
+
+    case 6:
+        deleterec();
+        break;
+
+    case 7:
+        points();
+        break;
+
+    case 8:
+        exit(1);
+        break;
+
+    default:
+        printf("\nInvalid Choice.");
+    }
+}
+void add_c()
+{
+    FILE *fp;
+    struct card std;
+    char another ='y';
+    system("cls");
+
+    fp = fopen("Card_details.txt","a");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    fflush(stdin);
+    while(another == 'y')
+    {
+        printf("\n\t<--:ADD CUSTOMER:-->\n\n");
+        printf("Enter details of customer\n");
+        fflush(stdin);
+        printf("Enter Name : ");
+        gets(std.c_name);
+        printf("\nEnter Card ID : ");
+        scanf("%d",&std.card_id);
+       // printf("\nEnter points : ");
+       // scanf("%d",&std.points);
+        fflush(stdin);
+        printf("\nEnter Date of Birth : ");
+        gets(std.dob);
+
+       // printf("\nEnter Last Date of Transaction : ");
+       // gets(std.ldot);
+        fflush(stdin);
+        printf("\nEnter Address : ");
+        gets(std.addr);
+        /*printf("\nEnter details of item\n");
+        fflush(stdin);
+        printf("Enter Item Name : ");
+        gets(std.i_name);
+        printf("\nEnter Item ID : ");
+        scanf("%d",&std.item_id);
+        printf("\nEnter Item price: ");
+        scanf("%f",&std.price);
+        printf("\nEnter Item quantity : ");
+        scanf("%d",&std.quantity);*/
+        //fwrite(&std,sizeof(std),1,fp);
+        printf("\n\nWant to add of another record? Then press 'y' else 'n'.");
+        fflush(stdin);
+        another = getch();
+        system("cls");
+        fflush(stdin);
+        fprintf(fp,"\n%s\t%d\t%s\t%s",std.c_name,std.card_id,std.dob,std.addr);
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+void add_i()
+{
+    FILE *fp,*ft;
+    struct customer std;
+    struct card s;
+    int flag=0, sum=0;
+    char another ='y';
+    system("cls");
+  char name[30],c_name[30];
+  fflush(stdin);
+  printf("Enter the Customer name: ");
+  scanf("%[^\n]",name);
+  ft=fopen("Card_details.txt","r");
+  while(fgets(c_name,30,ft))
+  {
+      char *ptr=strstr(c_name,name);
+      if(ptr != NULL)
+      {
+          flag=1;
+          break;
+      }
+  }
+  fclose(ft);
+
+  if(flag != 1)
+  {
+    printf("Error...No such Customer coresponding to Customer name\n");
+    exit(1);
+  }
+  fflush(stdin);
+
+    fp = fopen("Item_details.txt","a");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    fflush(stdin);
+    while(another == 'y')
+    {
+        printf("\n\t<--:ADD ITEMS TO CUSTOMER:-->\n\n");
+        printf("Enter details of items\n");
+        fflush(stdin);
+        strcpy(std.c_name,name);
+        printf("Enter Item Name : ");
+        gets(std.i_name);
+        printf("\nEnter Item ID : ");
+        scanf("%d",&std.item_id);
+        printf("\nEnter Item price: ");
+        scanf("%f",&std.price);
+        printf("\nEnter Item quantity : ");
+        scanf("%d",&std.quantity);
+        printf("\nEnter points : ");
+        scanf("%d",&std.points);
+        fflush(stdin);
+        printf("\nEnter Last Date of Transaction : ");
+        gets(std.ldot);
+        //fwrite(&std,sizeof(std),1,fp);
+        printf("\n\nWant to add of another item? Then press 'y' else 'n'.");
+        fflush(stdin);
+        another = getch();
+        system("cls");
+        fflush(stdin);
+//        fscanf(fp,"%d",&std.points);
+ //       sum=sum+std.points;
+   //     std.points=sum;
+        fprintf(fp,"\n%s\t%s\t%d\t%f\t%d\t%d\t%s",std.c_name,std.i_name,std.item_id,std.price,std.quantity,std.points,std.ldot);
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+
+void view_card()
+{
+    FILE *fp;
+    int i=1;
+    struct card std;
+    system("cls");
+    printf("\n<--------------------:SHOPPING CARD DETAILS:------------------------->\n\n");
+    printf("S.No  Name of Customer    Card ID     DOB           Address       ");
+    printf("\n-----------------------------------------------------------------------------\n");
+    fp = fopen("Card_details.txt","r");
+    if(fp == NULL){
+        printf("\nError opening file.");
+        exit(1);
+    }
+    fflush(stdin);
+    while(fscanf(fp,"%s  %d  %s  %s ",std.c_name,&std.card_id,std.dob,std.addr) != EOF){
+        printf("\n%-22s%-10d%-12s%-26s",std.c_name,std.card_id,std.dob,std.addr);
+        i++;
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+void view_items()
+{
+    FILE *fp;
+    int i=1;
+    struct customer std;
+    system("cls");
+    printf("\n<--------------------:CUSTOMER ITEM DETAILS:------------------------->\n\n");
+    printf("S.No  Name of Customer  Item Name  Item ID  Price  Quantity  Points  LDOT  ");
+    printf("\n------------------------------------------------------------------------------------------------------------------------\n");
+    fp = fopen("Item_details.txt","r");
+    if(fp == NULL){
+        printf("\nError opening file.");
+        exit(1);
+    }
+    fflush(stdin);
+    while(fscanf(fp,"%s %s %d %f %d %d %s",std.c_name,std.i_name,&std.item_id,&std.price,&std.quantity,&std.points,std.ldot) != EOF){
+        printf("\n%d%-22s%-10s%-10d%-5f%-2d%-2d%-12s",i,std.c_name,std.i_name,std.item_id,std.price,std.quantity,std.points,std.ldot);
+        i++;
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+/*void search()
+{
+    FILE *fp;
+    struct student std;
+    char stname[20];
+    system("cls");
+    printf("\n<--:SEARCH RECORD:-->\n\n");
+    printf("\nEnter name of student : ");
+    fflush(stdin);
+    gets(stname);
+    fp = fopen("record.txt","rb+");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    while(fread(&std,sizeof(std),1,fp ) == 1){
+        if(strcmp(stname,std.name) == 0){
+            printf("\nName : %s",std.name);
+            printf("\nMobile Number : %s",std.mobile);
+            printf("\nRoll No : %d",std.rollno);
+            printf("\nCourse : %s",std.course);
+            printf("\nBranch : %s",std.branch);
+        }
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+void modify()
+{
+    char stname[20];
+    FILE *fp;
+    struct card std;
+    system("cls");
+    printf("\n<--:MODIFY RECORD:-->\n\n");
+    printf("\nEnter name of customer to modify: ");
+    fflush(stdin);
+    gets(stname);
+    fp = fopen("Card_details.txt","rb+");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    rewind(fp);
+    fflush(stdin);
+    while(fread(&std,sizeof(std),1,fp) == 1)
+    {
+        if(strcmp(stname,std.c_name) == 0){
+            printf("\nEnter address: ");
+            gets(std.addr);
+            /*printf("\nEnter mobile number : ");
+            gets(std.mobile);
+            printf("\nEnter roll no : ");
+            scanf("%d",&std.rollno);
+            printf("\nEnter Course : ");
+            fflush(stdin);
+            gets(std.course);
+            printf("\nEnter Branch : ");
+            fflush(stdin);
+            gets(std.branch);
+            fseek(fp ,-sizeof(std),SEEK_CUR);
+            fwrite(&std,sizeof(std.addr),1,fp);
+            break;
+        }
+    }
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}*/
+void deleterec()
+{
+    char stname[20];
+    FILE *fp,*ft;
+    struct card std;
+    struct customer s;
+    system("cls");
+    printf("\n<--:DELETE RECORD:-->\n\n");
+    printf("\nEnter name of customer : ");
+    fflush(stdin);
+    gets(std.c_name);
+    fp = fopen("Card_details.txt","r");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    ft = fopen("Temp_card.txt","w");
+    if(ft == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    while(fread(&std,sizeof(std),1,fp) == 1){
+        if(strcmp(stname,std.c_name)!=0)
+            fwrite(&std,sizeof(std),1,ft);
+    }
+    fclose(fp);
+    fclose(ft);
+    remove("Card_details.txt");
+    rename("Temp_card.txt","Card_details.txt");
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
+
+void points()
+{
+    FILE *fp,*ft;
+    struct customer std;
+    struct card s;
+    int flag=0, sum=0,index;
+    system("cls");
+  char name[30],c_name[30];
+  char *pos;
+
+  fflush(stdin);
+  printf("Enter the Customer name: ");
+  scanf("%[^\n]",name);
+  ft=fopen("Card_details.txt","r");
+
+  while(fgets(c_name,30,ft))
+  {
+      index=0;
+      char *ptr=strstr(c_name,name);
+      if(ptr != NULL)
+      {
+          flag=1;
+          while((pos=strstr(c_name+index,name))!= NULL)
+          {
+              index=(pos-c_name)+1;
+              fflush(stdin);
+
+    fp = fopen("Item_details.txt","r");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    fflush(stdin);
+    sum=sum+std.points;
+          }
+          break;
+      }
+  }
+
+  fclose(ft);
+
+  if(flag != 1)
+  {
+    printf("Error...No such Customer coresponding to Customer name\n");
+    exit(1);
+  }
+  fflush(stdin);
+
+    /*fp = fopen("Item_details.txt","a");
+    if(fp == NULL){
+        printf("\nError opening file");
+        exit(1);
+    }
+    fflush(stdin);
+    sum=sum+std.points;*/
+    printf("\nTotal points of customer: %d",sum);
+    fclose(fp);
+    printf("\nPress any key to continue.");
+    getch();
+    menu();
+}
